@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">SkillsApp</string>
+    <string name="pass_hint">Password</string>
+    <string name="email_hint">Email</string>
+    <string name="app_welcome">Welcome to</string>
+    <string name="app_logo">Logo</string>
+    <string name="login_btn">Login to account</string>
+    <string name="login_register_btn">Need an account?</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="action_search_text">Search</string>
+    <string name="action_settings_text">Account Settings</string>
+    <string name="action_logout_text">Logout</string>
+    <string name="app_register">Create new account</string>
+    <string name="reg_btn_text">Create new account</string>
+    <string name="reg_login_text">Already have an account?</string>
+    <string name="reg_pass_text">Password</string>
+    <string name="reg_confirm_pass">Confirm password</string>
+    <string name="title_activity_setup">SetupActivity</string>
+    <string name="setup_name_hint">Name</string>
+    <string name="setup_button_name_text">Save account settings</string>
+</resources>

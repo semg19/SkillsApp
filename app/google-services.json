@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "714868647104",
+    "firebase_url": "https://skillsapp-b33a0.firebaseio.com",
+    "project_id": "skillsapp-b33a0",
+    "storage_bucket": "skillsapp-b33a0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714868647104:android:bc7d024d2289b25d",
+        "android_client_info": {
+          "package_name": "skills.com.sem.skillsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "714868647104-9cvnov8jhuab0fojhj7eicva25o43ld6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "skills.com.sem.skillsapp",
+            "certificate_hash": "f10c4ebeabb3f2040ac773bf9e18f43892811d26"
+          }
+        },
+        {
+          "client_id": "714868647104-3ogifqiii2gfqr6h6fle62oosegaqpkk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSUEkWO1dhviN2V0vFyYzREDlw4idJX9o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "714868647104-3ogifqiii2gfqr6h6fle62oosegaqpkk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
