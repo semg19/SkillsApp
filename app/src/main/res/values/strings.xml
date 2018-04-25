@@ -18,4 +18,6 @@
     <string name="title_activity_setup">SetupActivity</string>
     <string name="setup_name_hint">Name</string>
     <string name="setup_button_name_text">Save account settings</string>
+    <string name="add_skill_desc">Description</string>
+    <string name="new_skill_btn_hint">Post Skill</string>
 </resources>
