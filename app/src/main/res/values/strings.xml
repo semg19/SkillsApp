@@ -20,4 +20,6 @@
     <string name="setup_button_name_text">Save account settings</string>
     <string name="add_skill_desc">Description</string>
     <string name="new_skill_btn_hint">Post Skill</string>
+    <string name="download_btn_hint">Download</string>
+    <string name="record_btn_hint">Record</string>
 </resources>
