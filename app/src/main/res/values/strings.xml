@@ -22,4 +22,10 @@
     <string name="new_skill_btn_hint">Post Skill</string>
     <string name="download_btn_hint">Download</string>
     <string name="record_btn_hint">Record</string>
+    <string name="bottom_home_text">Home</string>
+    <string name="bottom_notification_text">Notification</string>
+    <string name="bottom_account_text">Account</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
