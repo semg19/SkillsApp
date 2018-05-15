@@ -50,50 +50,54 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Skills App");
 
-        mainbottomNav = findViewById(R.id.mainBottomNav);
+        if(mAuth.getCurrentUser() != null) {
 
-        // FRAGMENTS
-        homeFragment = new HomeFragment();
-        notificationFragment = new NotificationFragment();
-        accountFragment = new AccountFragment();
+            mainbottomNav = findViewById(R.id.mainBottomNav);
 
-        replaceFragment(homeFragment);
+            // FRAGMENTS
+            homeFragment = new HomeFragment();
+            notificationFragment = new NotificationFragment();
+            accountFragment = new AccountFragment();
 
-        mainbottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            replaceFragment(homeFragment);
 
-                switch (item.getItemId()){
+            mainbottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                    case R.id.bottom_action_home :
-                        replaceFragment(homeFragment);
-                        return true;
+                    switch (item.getItemId()) {
 
-                    case R.id.bottom_action_account :
-                        replaceFragment(accountFragment);
-                        return true;
+                        case R.id.bottom_action_home:
+                            replaceFragment(homeFragment);
+                            return true;
 
-                    case R.id.bottom_action_noti :
-                        replaceFragment(notificationFragment);
-                        return true;
+                        case R.id.bottom_action_account:
+                            replaceFragment(accountFragment);
+                            return true;
+
+                        case R.id.bottom_action_noti:
+                            replaceFragment(notificationFragment);
+                            return true;
 
                         default:
                             return false;
 
+                    }
                 }
-            }
-        });
+            });
 
-        addPostBtn = findViewById(R.id.add_skill_btn);
-        addPostBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            addPostBtn = findViewById(R.id.add_skill_btn);
+            addPostBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                Intent newSkillIntent = new Intent(MainActivity.this, NewSkillActivity.class);
-                startActivity(newSkillIntent);
+                    Intent newSkillIntent = new Intent(MainActivity.this, NewSkillActivity.class);
+                    startActivity(newSkillIntent);
 
-            }
-        });
+                }
+            });
+
+        }
     }
 
     @Override

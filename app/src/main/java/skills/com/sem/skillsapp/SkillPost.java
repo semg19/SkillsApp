@@ -1,15 +1,19 @@
 package skills.com.sem.skillsapp;
 
+import java.util.Date;
+
 public class SkillPost {
 
     public String user_id, movie_url, desc;
+    public Date timestamp;
 
     public SkillPost() {}
 
-    public SkillPost(String user_id, String movie_url, String desc) {
+    public SkillPost(String user_id, String movie_url, String desc, Date timestamp) {
         this.user_id = user_id;
         this.movie_url = movie_url;
         this.desc = desc;
+        this.timestamp = timestamp;
     }
 
     public String getUser_id() {
@@ -34,5 +38,13 @@ public class SkillPost {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

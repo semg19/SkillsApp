@@ -28,7 +28,7 @@
                 android:layout_width="52dp"
                 android:layout_height="39dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:src="@drawable/profile"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:text="Username"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -47,10 +47,12 @@
 
             <TextView
                 android:id="@+id/skill_date"
-                android:layout_width="29dp"
+                android:layout_width="67dp"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:layout_marginStart="8dp"
                 android:text="Date"
+                app:layout_constraintBottom_toTopOf="@+id/skill_movie"
                 app:layout_constraintStart_toEndOf="@+id/skill_user_image"
                 app:layout_constraintTop_toBottomOf="@+id/skill_user_name" />
 
@@ -58,7 +60,7 @@
                 android:id="@+id/skill_movie"
                 android:layout_width="wrap_content"
                 android:layout_height="199dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
