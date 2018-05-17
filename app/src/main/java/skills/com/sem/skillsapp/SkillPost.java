@@ -2,14 +2,14 @@ package skills.com.sem.skillsapp;
 
 import java.util.Date;
 
-public class SkillPost {
+public class SkillPost extends SkillPostId {
 
-    public String user_id, movie_url, desc;
+    public String user_id, movie_url, movie, desc;
     public Date timestamp;
 
     public SkillPost() {}
 
-    public SkillPost(String user_id, String movie_url, String desc, Date timestamp) {
+    public SkillPost(String user_id, String movie_url,String movie, String desc, Date timestamp) {
         this.user_id = user_id;
         this.movie_url = movie_url;
         this.desc = desc;

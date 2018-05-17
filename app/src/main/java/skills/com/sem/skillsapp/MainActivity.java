@@ -59,24 +59,29 @@ public class MainActivity extends AppCompatActivity {
             notificationFragment = new NotificationFragment();
             accountFragment = new AccountFragment();
 
-            replaceFragment(homeFragment);
+            initializeFragment();
 
             mainbottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+                    Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
+
                     switch (item.getItemId()) {
 
                         case R.id.bottom_action_home:
-                            replaceFragment(homeFragment);
+
+                            replaceFragment(homeFragment, currentFragment);
                             return true;
 
                         case R.id.bottom_action_account:
-                            replaceFragment(accountFragment);
+
+                            replaceFragment(accountFragment, currentFragment);
                             return true;
 
                         case R.id.bottom_action_noti:
-                            replaceFragment(notificationFragment);
+
+                            replaceFragment(notificationFragment, currentFragment);
                             return true;
 
                         default:
@@ -190,10 +195,46 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void replaceFragment(Fragment fragment) {
+    private void initializeFragment() {
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.main_container, fragment);
+
+        fragmentTransaction.add(R.id.main_container, homeFragment);
+        fragmentTransaction.add(R.id.main_container, notificationFragment);
+        fragmentTransaction.add(R.id.main_container, accountFragment);
+
+        fragmentTransaction.hide(notificationFragment);
+        fragmentTransaction.hide(accountFragment);
+
+        fragmentTransaction.commit();
+
+    }
+
+    private void replaceFragment(Fragment fragment, Fragment currentFragment){
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if(fragment == homeFragment){
+
+            fragmentTransaction.hide(accountFragment);
+            fragmentTransaction.hide(notificationFragment);
+
+        }
+
+        if(fragment == accountFragment){
+
+            fragmentTransaction.hide(homeFragment);
+            fragmentTransaction.hide(notificationFragment);
+
+        }
+
+        if(fragment == notificationFragment){
+
+            fragmentTransaction.hide(homeFragment);
+            fragmentTransaction.hide(accountFragment);
+
+        }
+        fragmentTransaction.show(fragment);
+
         fragmentTransaction.commit();
 
     }

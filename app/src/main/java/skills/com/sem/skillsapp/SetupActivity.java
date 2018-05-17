@@ -121,38 +121,38 @@ public class SetupActivity extends AppCompatActivity {
 
                 if (!TextUtils.isEmpty(user_name) && mainImageURI != null) {
 
-                setupProgress.setVisibility(View.VISIBLE);
+                    setupProgress.setVisibility(View.VISIBLE);
 
-                if (isChanged) {
+                    if (isChanged) {
 
-                        user_id = firebaseAuth.getCurrentUser().getUid();
+                            user_id = firebaseAuth.getCurrentUser().getUid();
 
-                        StorageReference image_path = storageReference.child("profile_images").child(user_id + ".jpg");
-                        image_path.putFile(mainImageURI).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            StorageReference image_path = storageReference.child("profile_images").child(user_id + ".jpg");
+                            image_path.putFile(mainImageURI).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
 
-                                if (task.isSuccessful()) {
+                                    if (task.isSuccessful()) {
 
-                                    storeFirestore(task, user_name);
+                                        storeFirestore(task, user_name);
 
-                                } else {
+                                    } else {
 
-                                    String error = task.getException().getMessage();
-                                    Toast.makeText(SetupActivity.this, "(IMAGE Error)" + error, Toast.LENGTH_LONG).show();
+                                        String error = task.getException().getMessage();
+                                        Toast.makeText(SetupActivity.this, "(IMAGE Error)" + error, Toast.LENGTH_LONG).show();
 
+                                    }
+
+                                    setupProgress.setVisibility(View.INVISIBLE);
+                                    setupBtn.setEnabled(true);
                                 }
+                            });
 
-                                setupProgress.setVisibility(View.INVISIBLE);
-                                setupBtn.setEnabled(true);
-                            }
-                        });
+                        } else {
 
-                    } else {
+                            storeFirestore(null,user_name);
 
-                        storeFirestore(null,user_name);
-
-                    }
+                        }
 
                 }
 

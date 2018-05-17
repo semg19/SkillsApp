@@ -36,6 +36,7 @@ public class HomeFragment extends Fragment {
     private SkillRecyclerAdapter skillRecyclerAdapter;
 
     private DocumentSnapshot lastVisible;
+    private Boolean isFirstPageFirstLoad = true;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -81,24 +82,43 @@ public class HomeFragment extends Fragment {
             });
 
             Query firstQuery = firebaseFirestore.collection("Posts").orderBy("timestamp", Query.Direction.DESCENDING).limit(3);
-            firstQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
-                    lastVisible = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
+                    if (!documentSnapshots.isEmpty()) {
 
-                    for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+                        if (isFirstPageFirstLoad) {
 
-                        if (doc.getType() == DocumentChange.Type.ADDED) {
-
-                            SkillPost skillPost = doc.getDocument().toObject(SkillPost.class);
-                            skill_list.add(skillPost);
-
-                            skillRecyclerAdapter.notifyDataSetChanged();
+                            lastVisible = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
 
                         }
-                    }
 
+                        for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+
+                            if (doc.getType() == DocumentChange.Type.ADDED) {
+
+                                String skillPostId = doc.getDocument().getId();
+                                SkillPost skillPost = doc.getDocument().toObject(SkillPost.class).withId(skillPostId);
+
+                                if (isFirstPageFirstLoad) {
+
+                                    skill_list.add(skillPost);
+
+                                } else {
+
+                                    skill_list.add(0, skillPost);
+
+                                }
+
+                                skillRecyclerAdapter.notifyDataSetChanged();
+
+                            }
+                        }
+
+                        isFirstPageFirstLoad = false;
+
+                    }
                 }
             });
 
@@ -110,34 +130,39 @@ public class HomeFragment extends Fragment {
 
     public void loadMorePosts() {
 
-        Query nextQuery = firebaseFirestore.collection("Posts")
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .startAfter(lastVisible)
-                .limit(3);
+        if(firebaseAuth.getCurrentUser() != null) {
 
-        nextQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+            Query nextQuery = firebaseFirestore.collection("Posts")
+                    .orderBy("timestamp", Query.Direction.DESCENDING)
+                    .startAfter(lastVisible)
+                    .limit(3);
 
-                if (!documentSnapshots.isEmpty()) {
+            nextQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
-                    lastVisible = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
+                    if (!documentSnapshots.isEmpty()) {
 
-                    for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+                        lastVisible = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
 
-                        if (doc.getType() == DocumentChange.Type.ADDED) {
+                        for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
 
-                            SkillPost skillPost = doc.getDocument().toObject(SkillPost.class);
-                            skill_list.add(skillPost);
+                            if (doc.getType() == DocumentChange.Type.ADDED) {
 
-                            skillRecyclerAdapter.notifyDataSetChanged();
+                                String skillPostId = doc.getDocument().getId();
+                                SkillPost skillPost = doc.getDocument().toObject(SkillPost.class).withId(skillPostId);
+                                skill_list.add(skillPost);
 
+                                skillRecyclerAdapter.notifyDataSetChanged();
+
+                            }
                         }
                     }
-                }
 
-            }
-        });
+                }
+            });
+
+        }
 
     }
 }
