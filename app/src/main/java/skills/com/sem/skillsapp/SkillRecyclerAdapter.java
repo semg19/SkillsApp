@@ -169,6 +169,7 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
             public void onClick(View v) {
 
                 Intent commentIntent = new Intent(context, CommentsActivity.class);
+                commentIntent.putExtra("skill_post_id", skillPostId);
                 context.startActivity(commentIntent);
 
             }

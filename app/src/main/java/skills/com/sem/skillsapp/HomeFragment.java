@@ -2,6 +2,7 @@ package skills.com.sem.skillsapp;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -100,6 +103,20 @@ public class HomeFragment extends Fragment {
 
                                 String skillPostId = doc.getDocument().getId();
                                 SkillPost skillPost = doc.getDocument().toObject(SkillPost.class).withId(skillPostId);
+
+                                String skillUserId = doc.getDocument().getString("user_id");
+                                firebaseFirestore.collection("Users").document(skillUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                        if (task.isSuccessful()) {
+
+
+
+                                        }
+
+                                    }
+                                });
 
                                 if (isFirstPageFirstLoad) {
 
