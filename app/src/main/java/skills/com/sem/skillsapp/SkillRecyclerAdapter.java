@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -36,14 +38,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdapter.ViewHolder> {
 
     public List<SkillPost> skill_list;
+    public List<User> user_list;
     public Context context;
 
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
 
-    public SkillRecyclerAdapter(List<SkillPost> skill_list) {
+    public SkillRecyclerAdapter(List<SkillPost> skill_list, List<User> user_list) {
 
         this.skill_list = skill_list;
+        this.user_list = user_list;
 
     }
 
@@ -59,7 +63,7 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
 
         holder.setIsRecyclable(false);
 
@@ -69,27 +73,19 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
         String desc_data = skill_list.get(position).getDesc();
         holder.setDescText(desc_data);
 
-        String user_id = skill_list.get(position).getUser_id();
-        firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        String skill_user_id = skill_list.get(position).getUser_id();
 
-                if (task.isSuccessful()){
+        if (skill_user_id.equals(currentUserID)) {
 
-                    String userName = task.getResult().getString("name");
-                    String userImage = task.getResult().getString("image");
+            holder.skillDeleteBtn.setEnabled(true);
+            holder.skillDeleteBtn.setVisibility(View.VISIBLE);
 
-                    holder.setUserData(userName, userImage);
+        }
 
-                } else {
+        String userName = user_list.get(position).getName();
+        String userImage = user_list.get(position).getImage();
 
-//                    String error = task.getException().getMessage();
-//                    Toast.makeText(SkillRecyclerAdapter.this, "Error: " + error, Toast.LENGTH_LONG).show();
-
-                }
-
-            }
-        });
+        holder.setUserData(userName, userImage);
 
         long milliseconds = skill_list.get(position).getTimestamp().getTime();
         String dateString = new SimpleDateFormat().format(new Date(milliseconds));
@@ -175,6 +171,23 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
             }
         });
 
+        holder.skillDeleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                firebaseFirestore.collection("Posts").document(skillPostId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        skill_list.remove(position);
+                        user_list.remove(position);
+
+                    }
+                });
+
+            }
+        });
+
     }
 
     @Override
@@ -196,6 +209,7 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
         private TextView skillLikeCount;
 
         private ImageView skillCommentBtn;
+        private Button skillDeleteBtn;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -204,6 +218,7 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
 
             skillLikeButton = mView.findViewById(R.id.skill_like_btn);
             skillCommentBtn = mView.findViewById(R.id.skill_comment_btn);
+            skillDeleteBtn = mView.findViewById(R.id.skill_delete_btn);
         }
 
         public void setDescText(String descText){

@@ -33,6 +33,7 @@ public class HomeFragment extends Fragment {
 
     private RecyclerView skill_list_view;
     private List<SkillPost> skill_list;
+    private List<User> user_list;
 
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
@@ -53,13 +54,15 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         skill_list = new ArrayList<>();
+        user_list = new ArrayList<>();
         skill_list_view = view.findViewById(R.id.skill_list_view);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        skillRecyclerAdapter= new SkillRecyclerAdapter(skill_list);
+        skillRecyclerAdapter= new SkillRecyclerAdapter(skill_list, user_list);
         skill_list_view.setLayoutManager(new LinearLayoutManager(getActivity()));
         skill_list_view.setAdapter(skillRecyclerAdapter);
+        skill_list_view.setHasFixedSize(true);
 
         if (firebaseAuth.getCurrentUser() != null) {
 
@@ -75,7 +78,6 @@ public class HomeFragment extends Fragment {
                     if (reachedBottom) {
 
                         String desc = lastVisible.getString("desc");
-                        Toast.makeText(container.getContext(), "Reached : " + desc, Toast.LENGTH_SHORT).show();
 
                         loadMorePosts();
 
@@ -94,6 +96,8 @@ public class HomeFragment extends Fragment {
                         if (isFirstPageFirstLoad) {
 
                             lastVisible = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
+                            skill_list.clear();
+                            user_list.clear();
 
                         }
 
@@ -102,7 +106,7 @@ public class HomeFragment extends Fragment {
                             if (doc.getType() == DocumentChange.Type.ADDED) {
 
                                 String skillPostId = doc.getDocument().getId();
-                                SkillPost skillPost = doc.getDocument().toObject(SkillPost.class).withId(skillPostId);
+                                final SkillPost skillPost = doc.getDocument().toObject(SkillPost.class).withId(skillPostId);
 
                                 String skillUserId = doc.getDocument().getString("user_id");
                                 firebaseFirestore.collection("Users").document(skillUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -111,24 +115,26 @@ public class HomeFragment extends Fragment {
 
                                         if (task.isSuccessful()) {
 
+                                            User user = task.getResult().toObject(User.class);
 
+                                            if (isFirstPageFirstLoad) {
+
+                                                user_list.add(user);
+                                                skill_list.add(skillPost);
+
+                                            } else {
+
+                                                user_list.add(user);
+                                                skill_list.add(0, skillPost);
+
+                                            }
+
+                                            skillRecyclerAdapter.notifyDataSetChanged();
 
                                         }
 
                                     }
                                 });
-
-                                if (isFirstPageFirstLoad) {
-
-                                    skill_list.add(skillPost);
-
-                                } else {
-
-                                    skill_list.add(0, skillPost);
-
-                                }
-
-                                skillRecyclerAdapter.notifyDataSetChanged();
 
                             }
                         }
@@ -167,10 +173,26 @@ public class HomeFragment extends Fragment {
                             if (doc.getType() == DocumentChange.Type.ADDED) {
 
                                 String skillPostId = doc.getDocument().getId();
-                                SkillPost skillPost = doc.getDocument().toObject(SkillPost.class).withId(skillPostId);
-                                skill_list.add(skillPost);
+                                final SkillPost skillPost = doc.getDocument().toObject(SkillPost.class).withId(skillPostId);
+                                String skillUserId = doc.getDocument().getString("user_id");
 
-                                skillRecyclerAdapter.notifyDataSetChanged();
+                                firebaseFirestore.collection("Users").document(skillUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                        if (task.isSuccessful()) {
+
+                                            User user = task.getResult().toObject(User.class);
+
+                                            user_list.add(user);
+                                            skill_list.add(skillPost);
+
+                                            skillRecyclerAdapter.notifyDataSetChanged();
+
+                                        }
+
+                                    }
+                                });
 
                             }
                         }
