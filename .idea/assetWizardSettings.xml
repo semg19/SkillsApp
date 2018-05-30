@@ -63,7 +63,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="color" value="747474" />
+                                                <entry key="color" value="ffffff" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -74,7 +74,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/content/ic_send_black_24dp.xml" />
+                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/av/ic_pause_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -85,7 +85,7 @@
                                   <option name="values">
                                     <map>
                                       <entry key="iconShape" value="NONE" />
-                                      <entry key="outputName" value="action_send" />
+                                      <entry key="outputName" value="action_pause" />
                                     </map>
                                   </option>
                                 </PersistentState>

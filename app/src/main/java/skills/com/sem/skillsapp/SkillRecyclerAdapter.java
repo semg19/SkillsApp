@@ -1,7 +1,11 @@
 package skills.com.sem.skillsapp;
 
+import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,8 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -69,6 +75,9 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
 
         final String skillPostId = skill_list.get(position).SkillPostId;
         final String currentUserID = firebaseAuth.getCurrentUser().getUid();
+
+        String movie_url = skill_list.get(position).getMovie_url();
+        holder.setSkillVideo(movie_url);
 
         String desc_data = skill_list.get(position).getDesc();
         holder.setDescText(desc_data);
@@ -205,6 +214,20 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
         private TextView skillUserName;
         private CircleImageView skillUserImage;
 
+        private VideoView mainVideoView;
+        private ImageView playBtn;
+        private TextView currentTimer;
+        private TextView durationTimer;
+        private ProgressBar currentProgress;
+        private ProgressBar bufferProgress;
+
+        private boolean isPlaying;
+
+        private Uri videoUri;
+
+        private int current = 0;
+        private int duration = 0;
+
         private ImageView skillLikeButton;
         private TextView skillLikeCount;
 
@@ -212,6 +235,7 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
         private Button skillDeleteBtn;
 
         public ViewHolder(View itemView) {
+
             super(itemView);
 
             mView = itemView;
@@ -254,6 +278,125 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
             skillLikeCount = mView.findViewById(R.id.skill_like_count);
             skillLikeCount.setText(count + " Likes");
 
+        }
+
+        public void setSkillVideo(String downloadUri){
+
+            isPlaying = false;
+
+            mainVideoView = mView.findViewById(R.id.mainVideoView);
+            playBtn = mView.findViewById(R.id.playBtn);
+            currentProgress = mView.findViewById(R.id.videoProgress);
+            currentProgress.setMax(100);
+
+            currentTimer = mView.findViewById(R.id.currentTimer);
+            durationTimer = mView.findViewById(R.id.durationTimer);
+            bufferProgress = mView.findViewById(R.id.bufferProgress);
+
+            videoUri = Uri.parse(downloadUri);
+
+            mainVideoView.setVideoURI(videoUri);
+            mainVideoView.requestFocus();
+
+            mainVideoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+                @Override
+                public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
+
+                    if (i == mediaPlayer.MEDIA_INFO_BUFFERING_START) {
+
+                        bufferProgress.setVisibility(View.VISIBLE);
+
+                    } else if (i == mediaPlayer.MEDIA_INFO_BUFFERING_END) {
+
+                        bufferProgress.setVisibility(View.INVISIBLE);
+
+                    }
+
+                    return false;
+
+                }
+            });
+
+            mainVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
+
+                    duration = mediaPlayer.getDuration()/1000;
+                    String durationString = String.format("%02d:%02d", duration / 60, duration % 60);
+
+                    durationTimer.setText(durationString);
+
+                }
+            });
+
+            mainVideoView.start();
+            isPlaying = true;
+            playBtn.setImageResource(R.mipmap.action_pause);
+
+            new VideoProgress().execute();
+
+            playBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (isPlaying) {
+
+                        mainVideoView.pause();
+                        isPlaying = false;
+                        playBtn.setImageResource(R.mipmap.action_play);
+
+                    } else {
+
+                        mainVideoView.start();
+                        isPlaying = true;
+                        playBtn.setImageResource(R.mipmap.action_pause);
+
+                    }
+
+                }
+            });
+
+        }
+
+        public class VideoProgress extends AsyncTask<Void, Integer, Void> {
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                do {
+
+//                    if (isPlaying) {
+
+                        current = mainVideoView.getCurrentPosition()/1000;
+                        publishProgress(current);
+
+//                    }
+
+                } while (currentProgress.getProgress() <= 100);
+
+                return null;
+
+            }
+
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+
+                try {
+
+                    int currentPercent = values[0] * 100/duration;
+                    currentProgress.setProgress(currentPercent);
+
+                    String currentString = String.format("%02d:%02d", values[0] / 60, values[0] % 60);
+
+                    currentTimer.setText(currentString);
+
+                } catch (Exception e) {
+
+
+
+                }
+
+            }
         }
 
     }

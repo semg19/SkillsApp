@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String current_user_id;
 
+    public boolean isPlaying;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,7 +147,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//
+//        isPlaying = false;
+//
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

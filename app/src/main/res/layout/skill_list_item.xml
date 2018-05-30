@@ -59,23 +59,66 @@
                 android:id="@+id/skill_date"
                 android:layout_width="67dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:layout_marginStart="8dp"
                 android:text="Date"
-                app:layout_constraintBottom_toTopOf="@+id/skill_movie"
                 app:layout_constraintStart_toEndOf="@+id/skill_user_image"
                 app:layout_constraintTop_toBottomOf="@+id/skill_user_name" />
 
-            <ImageView
-                android:id="@+id/skill_movie"
+            <VideoView
+                android:id="@+id/mainVideoView"
                 android:layout_width="wrap_content"
-                android:layout_height="199dp"
+                android:layout_height="200dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
-                android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/skill_user_image"
-                app:srcCompat="@drawable/post_placeholder" />
+                app:layout_constraintTop_toBottomOf="@+id/skill_user_image" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryDark"
+                android:orientation="horizontal"
+                android:weightSum="10"
+                app:layout_constraintTop_toBottomOf="@+id/mainVideoView"
+                tools:layout_editor_absoluteX="1dp">
+
+                <ImageView
+                    android:id="@+id/playBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="false"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    app:srcCompat="@mipmap/action_play" />
+
+                <TextView
+                    android:id="@+id/currentTimer"
+                    android:layout_width="39dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="0:00" />
+
+                <ProgressBar
+                    android:id="@+id/videoProgress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="205dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/durationTimer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|end"
+                    android:paddingEnd="10dp"
+                    android:text="0:00" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/skill_desc"
@@ -83,11 +126,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:text="lorem ipsum dolor sit amet consectetur adipiscing elit"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/skill_movie" />
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
             <TextView
                 android:id="@+id/skill_like_count"
@@ -130,7 +173,6 @@
                 android:id="@+id/skill_delete_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginTop="8dp"
                 android:background="@android:color/white"
@@ -138,9 +180,23 @@
                 android:text="Delete Skill"
                 android:textAllCaps="false"
                 android:visibility="invisible"
-                app:layout_constraintBottom_toTopOf="@+id/skill_movie"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ProgressBar
+                android:id="@+id/bufferProgress"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:indeterminate="true"
+                app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/mainVideoView" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
