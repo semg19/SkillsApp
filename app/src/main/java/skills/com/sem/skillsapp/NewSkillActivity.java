@@ -144,42 +144,6 @@ public class NewSkillActivity extends AppCompatActivity {
         });
     }
 
-//    public void upload(View view) {
-//        if (videoUri != null) {
-//            UploadTask uploadTask = videoRef.putFile(videoUri);
-//
-//            uploadTask.addOnFailureListener(new OnFailureListener() {
-//                @Override
-//                public void onFailure(@NonNull Exception e) {
-//                    Toast.makeText(NewSkillActivity.this, "Upload failed: " + e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
-//                }
-//            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                @Override
-//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                    Toast.makeText(NewSkillActivity.this, "Upload completed",Toast.LENGTH_LONG).show();
-//                }
-//            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-//                @Override
-//                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-//                    updateProgress(taskSnapshot);
-//                }
-//            });
-//        } else {
-//            Toast.makeText(NewSkillActivity.this, "Nothing to upload",Toast.LENGTH_LONG).show();
-//        }
-//    }
-
-//    private void updateProgress(UploadTask.TaskSnapshot taskSnapshot) {
-//
-//        long fileSize = taskSnapshot.getTotalByteCount();
-//        long uploadBytes = taskSnapshot.getBytesTransferred();
-//        long progress = (100 * uploadBytes) / fileSize;
-//
-//        ProgressBar progressBar = (ProgressBar) findViewById(R.id.new_skill_progressbar);
-//        progressBar.setProgress((int) progress);
-//
-//    }
-
     public void record(View view) {
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         startActivityForResult(intent, REQUEST_CODE);

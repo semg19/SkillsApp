@@ -13,10 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -122,6 +124,28 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
             }
         });
 
+        firebaseFirestore.collection("Posts/" + skillPostId + "/Comments").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                if (firebaseAuth.getCurrentUser() != null) {
+
+                    if (!documentSnapshots.isEmpty()) {
+
+                        int count = documentSnapshots.size();
+
+                        holder.updateCommentsCount(count);
+
+                    } else {
+
+                        holder.updateCommentsCount(0);
+
+                    }
+
+                }
+            }
+        });
+
         firebaseFirestore.collection("Posts/" + skillPostId + "/Likes").document(currentUserID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
@@ -219,13 +243,13 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
         private TextView currentTimer;
         private TextView durationTimer;
         private ProgressBar currentProgress;
-        private ProgressBar bufferProgress;
+//        private ProgressBar bufferProgress;
 
         private boolean isPlaying;
 
         private Uri videoUri;
 
-        private int current = 0;
+//        private int current = 0;
         private int duration = 0;
 
         private ImageView skillLikeButton;
@@ -280,6 +304,13 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
 
         }
 
+        public void updateCommentsCount(int count) {
+
+            skillLikeCount = mView.findViewById(R.id.skill_comment_count);
+            skillLikeCount.setText(count + " Comments");
+
+        }
+
         public void setSkillVideo(String downloadUri){
 
             isPlaying = false;
@@ -291,31 +322,31 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
 
             currentTimer = mView.findViewById(R.id.currentTimer);
             durationTimer = mView.findViewById(R.id.durationTimer);
-            bufferProgress = mView.findViewById(R.id.bufferProgress);
+//            bufferProgress = mView.findViewById(R.id.bufferProgress);
 
             videoUri = Uri.parse(downloadUri);
 
             mainVideoView.setVideoURI(videoUri);
             mainVideoView.requestFocus();
 
-            mainVideoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
-                @Override
-                public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
-
-                    if (i == mediaPlayer.MEDIA_INFO_BUFFERING_START) {
-
-                        bufferProgress.setVisibility(View.VISIBLE);
-
-                    } else if (i == mediaPlayer.MEDIA_INFO_BUFFERING_END) {
-
-                        bufferProgress.setVisibility(View.INVISIBLE);
-
-                    }
-
-                    return false;
-
-                }
-            });
+//            mainVideoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+//                @Override
+//                public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
+//
+//                    if (i == mediaPlayer.MEDIA_INFO_BUFFERING_START) {
+//
+//                        bufferProgress.setVisibility(View.VISIBLE);
+//
+//                    } else if (i == mediaPlayer.MEDIA_INFO_BUFFERING_END) {
+//
+//                        bufferProgress.setVisibility(View.INVISIBLE);
+//
+//                    }
+//
+//                    return false;
+//
+//                }
+//            });
 
             mainVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
@@ -333,7 +364,7 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
             isPlaying = true;
             playBtn.setImageResource(R.mipmap.action_pause);
 
-            new VideoProgress().execute();
+//            new VideoProgress().execute();
 
             playBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -358,46 +389,46 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
 
         }
 
-        public class VideoProgress extends AsyncTask<Void, Integer, Void> {
-            @Override
-            protected Void doInBackground(Void... voids) {
-
-                do {
-
-//                    if (isPlaying) {
-
-                        current = mainVideoView.getCurrentPosition()/1000;
-                        publishProgress(current);
-
-//                    }
-
-                } while (currentProgress.getProgress() <= 100);
-
-                return null;
-
-            }
-
-            @Override
-            protected void onProgressUpdate(Integer... values) {
-                super.onProgressUpdate(values);
-
-                try {
-
-                    int currentPercent = values[0] * 100/duration;
-                    currentProgress.setProgress(currentPercent);
-
-                    String currentString = String.format("%02d:%02d", values[0] / 60, values[0] % 60);
-
-                    currentTimer.setText(currentString);
-
-                } catch (Exception e) {
-
-
-
-                }
-
-            }
-        }
+//        public class VideoProgress extends AsyncTask<Void, Integer, Void> {
+//            @Override
+//            protected Void doInBackground(Void... voids) {
+//
+//                do {
+//
+////                    if (isPlaying) {
+//
+//                    current = mainVideoView.getCurrentPosition()/1000;
+//                    publishProgress(current);
+//
+////                    }
+//
+//                } while (currentProgress.getProgress() <= 100);
+//
+//                return null;
+//
+//            }
+//
+//            @Override
+//            protected void onProgressUpdate(Integer... values) {
+//                super.onProgressUpdate(values);
+//
+//                try {
+//
+//                    int currentPercent = values[0] * 100/duration;
+//                    currentProgress.setProgress(currentPercent);
+//
+//                    String currentString = String.format("%02d:%02d", values[0] / 60, values[0] % 60);
+//
+//                    currentTimer.setText(currentString);
+//
+//                } catch (Exception e) {
+//
+//
+//
+//                }
+//
+//            }
+//        }
 
     }
 

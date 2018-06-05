@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -37,6 +38,7 @@ public class CommentsActivity extends AppCompatActivity {
     private RecyclerView comment_list;
     private CommentsRecyclerAdapter commentsRecyclerAdapter;
     private List<Comments> commentsList;
+    private List<User> usersList;
 
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
@@ -65,7 +67,8 @@ public class CommentsActivity extends AppCompatActivity {
         comment_list = findViewById(R.id.comment_list);
 
         commentsList = new ArrayList<>();
-        commentsRecyclerAdapter = new CommentsRecyclerAdapter(commentsList);
+        usersList = new ArrayList<>();
+        commentsRecyclerAdapter = new CommentsRecyclerAdapter(commentsList, usersList);
         comment_list.setHasFixedSize(true);
         comment_list.setLayoutManager(new LinearLayoutManager(this));
         comment_list.setAdapter(commentsRecyclerAdapter);
@@ -81,9 +84,26 @@ public class CommentsActivity extends AppCompatActivity {
                         if (doc.getType() == DocumentChange.Type.ADDED) {
 
                             String commentId = doc.getDocument().getId();
-                            Comments comments = doc.getDocument().toObject(Comments.class);
-                            commentsList.add(comments);
-                            commentsRecyclerAdapter.notifyDataSetChanged();
+                            final Comments comments = doc.getDocument().toObject(Comments.class);
+
+                            String skillUserId = doc.getDocument().getString("user_id");
+                            firebaseFirestore.collection("Users").document(skillUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                    if (task.isSuccessful()) {
+
+                                        User user = task.getResult().toObject(User.class);
+
+                                        usersList.add(user);
+                                        commentsList.add(comments);
+
+                                        commentsRecyclerAdapter.notifyDataSetChanged();
+
+                                    }
+
+                                }
+                            });
 
                         }
                     }
