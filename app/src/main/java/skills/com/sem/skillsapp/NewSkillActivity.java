@@ -52,6 +52,7 @@ public class NewSkillActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
 
     private String current_user_id;
+    private String category_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,7 @@ public class NewSkillActivity extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
+        category_id = getIntent().getStringExtra("category_id");
         current_user_id = firebaseAuth.getCurrentUser().getUid();
 
         newSkillToolbar = findViewById(R.id.new_skill_toolbar);
@@ -104,14 +106,14 @@ public class NewSkillActivity extends AppCompatActivity {
                                 postMap.put("user_id", current_user_id);
                                 postMap.put("timestamp", FieldValue.serverTimestamp());
 
-                                firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                firebaseFirestore.collection("Category/" + category_id + "/Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentReference> task) {
 
                                         if (task.isSuccessful()) {
 
                                             Toast.makeText(NewSkillActivity.this, "Upload completed", Toast.LENGTH_LONG).show();
-                                            Intent mainIntent = new Intent(NewSkillActivity.this, MainActivity.class);
+                                            Intent mainIntent = new Intent(NewSkillActivity.this, SkillActivity.class);
                                             startActivity(mainIntent);
                                             finish();
 
@@ -131,12 +133,28 @@ public class NewSkillActivity extends AppCompatActivity {
 
                                 String error = task.getException().getMessage();
                                 Toast.makeText(NewSkillActivity.this, "Upload failed: " + error, Toast.LENGTH_LONG).show();
+
                                 newSkillProgress.setVisibility(View.INVISIBLE);
 
                             }
 
                         }
                     });
+
+                } else if (TextUtils.isEmpty(desc) && videoUri == null) {
+
+                    Toast.makeText(NewSkillActivity.this, "Please upload a complete skill.",
+                    Toast.LENGTH_LONG).show();
+
+                } else if (TextUtils.isEmpty(desc)) {
+
+                    Toast.makeText(NewSkillActivity.this, "Please fill in a description.",
+                    Toast.LENGTH_LONG).show();
+
+                } else if (videoUri == null) {
+
+                    Toast.makeText(NewSkillActivity.this, "Please upload a video.",
+                    Toast.LENGTH_LONG).show();
 
                 }
 
@@ -147,30 +165,6 @@ public class NewSkillActivity extends AppCompatActivity {
     public void record(View view) {
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         startActivityForResult(intent, REQUEST_CODE);
-    }
-
-    public void download(View view) {
-        try {
-            final File localFile = File.createTempFile("userIntro", "3gp");
-
-            storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(NewSkillActivity.this, "Download complete", Toast.LENGTH_LONG).show();
-
-                    final VideoView videoView = (VideoView) findViewById(R.id.videoView);
-                    videoView.setVideoURI(Uri.fromFile(localFile));
-                    videoView.start();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(NewSkillActivity.this, "Download failed" + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                }
-            });
-        } catch (Exception e) {
-            Toast.makeText(NewSkillActivity.this, "Failed to create temp file" + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-        }
     }
 
     @Override

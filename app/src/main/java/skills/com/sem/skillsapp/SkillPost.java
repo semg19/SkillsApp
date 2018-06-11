@@ -6,6 +6,7 @@ public class SkillPost extends SkillPostId {
 
     public String user_id, movie_url, desc;
     public Date timestamp;
+//    public int likes;
 
     public SkillPost() {}
 
@@ -14,6 +15,7 @@ public class SkillPost extends SkillPostId {
         this.movie_url = movie_url;
         this.desc = desc;
         this.timestamp = timestamp;
+//        this.likes = likes;
     }
 
     public String getUser_id() {
@@ -47,4 +49,12 @@ public class SkillPost extends SkillPostId {
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
+
+//    public int getLikes() {
+//        return likes;
+//    }
+
+//    public void setLikes(int likes) {
+//        this.likes = likes;
+//    }
 }

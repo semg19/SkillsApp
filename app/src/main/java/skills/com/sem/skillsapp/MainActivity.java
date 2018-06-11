@@ -27,13 +27,9 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore firebaseFirestore;
 
-    private FloatingActionButton addPostBtn;
-
     private BottomNavigationView mainbottomNav;
 
-    private HomeFragment homeFragment;
-    private NotificationFragment notificationFragment;
-    private AccountFragment accountFragment;
+    private CategoryFragment categoryFragment;
 
     private String current_user_id;
 
@@ -57,10 +53,7 @@ public class MainActivity extends AppCompatActivity {
             mainbottomNav = findViewById(R.id.mainBottomNav);
 
             // FRAGMENTS
-            homeFragment = new HomeFragment();
-            notificationFragment = new NotificationFragment();
-            accountFragment = new AccountFragment();
-
+            categoryFragment = new CategoryFragment();
             initializeFragment();
 
             mainbottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -71,36 +64,15 @@ public class MainActivity extends AppCompatActivity {
 
                     switch (item.getItemId()) {
 
-                        case R.id.bottom_action_home:
+                        case R.id.bottom_action_category:
 
-                            replaceFragment(homeFragment, currentFragment);
-                            return true;
-
-                        case R.id.bottom_action_account:
-
-                            replaceFragment(accountFragment, currentFragment);
-                            return true;
-
-                        case R.id.bottom_action_noti:
-
-                            replaceFragment(notificationFragment, currentFragment);
+                            replaceFragment(categoryFragment, currentFragment);
                             return true;
 
                         default:
                             return false;
 
                     }
-                }
-            });
-
-            addPostBtn = findViewById(R.id.add_skill_btn);
-            addPostBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    Intent newSkillIntent = new Intent(MainActivity.this, NewSkillActivity.class);
-                    startActivity(newSkillIntent);
-
                 }
             });
 
@@ -208,12 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
-        fragmentTransaction.add(R.id.main_container, homeFragment);
-        fragmentTransaction.add(R.id.main_container, notificationFragment);
-        fragmentTransaction.add(R.id.main_container, accountFragment);
-
-        fragmentTransaction.hide(notificationFragment);
-        fragmentTransaction.hide(accountFragment);
+        fragmentTransaction.add(R.id.main_container, categoryFragment);
 
         fragmentTransaction.commit();
 
@@ -222,26 +189,7 @@ public class MainActivity extends AppCompatActivity {
     private void replaceFragment(Fragment fragment, Fragment currentFragment){
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if(fragment == homeFragment){
 
-            fragmentTransaction.hide(accountFragment);
-            fragmentTransaction.hide(notificationFragment);
-
-        }
-
-        if(fragment == accountFragment){
-
-            fragmentTransaction.hide(homeFragment);
-            fragmentTransaction.hide(notificationFragment);
-
-        }
-
-        if(fragment == notificationFragment){
-
-            fragmentTransaction.hide(homeFragment);
-            fragmentTransaction.hide(accountFragment);
-
-        }
         fragmentTransaction.show(fragment);
 
         fragmentTransaction.commit();

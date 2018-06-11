@@ -1,15 +1,17 @@
 package skills.com.sem.skillsapp;
 
-
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -25,42 +27,47 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+public class SkillActivity extends AppCompatActivity {
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class HomeFragment extends Fragment {
-
+    private Toolbar skillToolbar;
     private RecyclerView skill_list_view;
-    private List<SkillPost> skill_list;
-    private List<User> user_list;
+    private FloatingActionButton addPostBtn;
+
+    private SkillRecyclerAdapter skillRecyclerAdapter;
+    public List<SkillPost> skill_list;
+    public List<User> user_list;
+    public List<Category> category_list;
+    public Context context;
 
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
-    private SkillRecyclerAdapter skillRecyclerAdapter;
+
+    private String category_id;
 
     private DocumentSnapshot lastVisible;
     private Boolean isFirstPageFirstLoad = true;
 
-    public HomeFragment() {
-        // Required empty public constructor
-    }
-
 
     @Override
-    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_skills);
+
+        skillToolbar = findViewById(R.id.skills_toolbar);
+        setSupportActionBar(skillToolbar);
 
         skill_list = new ArrayList<>();
         user_list = new ArrayList<>();
-        skill_list_view = view.findViewById(R.id.skill_list_view);
+        category_list = new ArrayList<>();
+        skill_list_view = findViewById(R.id.skill_list_view);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        skillRecyclerAdapter= new SkillRecyclerAdapter(skill_list, user_list);
-        skill_list_view.setLayoutManager(new LinearLayoutManager(getActivity()));
+        category_id = getIntent().getStringExtra("category_id");
+
+        skillRecyclerAdapter = new SkillRecyclerAdapter(skill_list, user_list, SkillActivity.this);
+        skill_list_view.setLayoutManager(new LinearLayoutManager(SkillActivity.this));
         skill_list_view.setAdapter(skillRecyclerAdapter);
         skill_list_view.setHasFixedSize(true);
 
@@ -86,8 +93,8 @@ public class HomeFragment extends Fragment {
                 }
             });
 
-            Query firstQuery = firebaseFirestore.collection("Posts").orderBy("timestamp", Query.Direction.DESCENDING).limit(3);
-            firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
+            Query firstQuery = firebaseFirestore.collection("Category/" + category_id + "/Posts").orderBy("timestamp", Query.Direction.DESCENDING).limit(3);
+            firstQuery.addSnapshotListener(SkillActivity.this, new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
@@ -145,22 +152,37 @@ public class HomeFragment extends Fragment {
                 }
             });
 
-        }
+            addPostBtn = findViewById(R.id.add_skill_btn);
+            addPostBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-        // Inflate the layout for this fragment
-        return view;
+                    Intent newSkillIntent = new Intent(SkillActivity.this, NewSkillActivity.class);
+                    newSkillIntent.putExtra("category_id", category_id);
+                    startActivity(newSkillIntent);
+
+                }
+            });
+
+        }
+    }
+
+    public String getId() {
+
+        return category_id;
+
     }
 
     public void loadMorePosts() {
 
         if(firebaseAuth.getCurrentUser() != null) {
 
-            Query nextQuery = firebaseFirestore.collection("Posts")
+            Query nextQuery = firebaseFirestore.collection("Category/" + category_id + "/Posts")
                     .orderBy("timestamp", Query.Direction.DESCENDING)
                     .startAfter(lastVisible)
                     .limit(3);
 
-            nextQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
+            nextQuery.addSnapshotListener(SkillActivity.this, new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 

@@ -44,6 +44,7 @@ public class CommentsActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
 
     private String skill_post_id;
+    private String category_id;
     private String current_user_id;
 
     @Override
@@ -60,6 +61,7 @@ public class CommentsActivity extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
 
         skill_post_id = getIntent().getStringExtra("skill_post_id");
+        category_id = getIntent().getStringExtra("category_id");
         current_user_id = firebaseAuth.getCurrentUser().getUid();
 
         comment_field = findViewById(R.id.comment_field);
@@ -73,7 +75,7 @@ public class CommentsActivity extends AppCompatActivity {
         comment_list.setLayoutManager(new LinearLayoutManager(this));
         comment_list.setAdapter(commentsRecyclerAdapter);
 
-        firebaseFirestore.collection("Posts/" + skill_post_id + "/Comments").addSnapshotListener(CommentsActivity.this, new EventListener<QuerySnapshot>() {
+        firebaseFirestore.collection("Category/" + category_id + "/Posts/" + skill_post_id + "/Comments").addSnapshotListener(CommentsActivity.this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
@@ -124,7 +126,7 @@ public class CommentsActivity extends AppCompatActivity {
                 commentsMap.put("user_id", current_user_id);
                 commentsMap.put("timestamp", FieldValue.serverTimestamp());
 
-                firebaseFirestore.collection("Posts/" + skill_post_id + "/Comments").add(commentsMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                firebaseFirestore.collection("Category/" + category_id + "/Posts/" + skill_post_id + "/Comments").add(commentsMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentReference> task) {
 

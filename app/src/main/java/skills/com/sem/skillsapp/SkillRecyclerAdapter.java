@@ -1,5 +1,6 @@
 package skills.com.sem.skillsapp;
 
+import android.app.Activity;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Intent;
@@ -45,6 +46,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdapter.ViewHolder> {
 
+    SkillActivity skillActivity;
+
     public List<SkillPost> skill_list;
     public List<User> user_list;
     public Context context;
@@ -52,10 +55,11 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
 
-    public SkillRecyclerAdapter(List<SkillPost> skill_list, List<User> user_list) {
+    public SkillRecyclerAdapter(List<SkillPost> skill_list, List<User> user_list, SkillActivity activity ) {
 
         this.skill_list = skill_list;
         this.user_list = user_list;
+        skillActivity = activity;
 
     }
 
@@ -63,7 +67,7 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.skill_list_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.skill_list_item, parent,false);
         context = parent.getContext();
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -77,6 +81,7 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
 
         final String skillPostId = skill_list.get(position).SkillPostId;
         final String currentUserID = firebaseAuth.getCurrentUser().getUid();
+        final String categoryId = skillActivity.getId();
 
         String movie_url = skill_list.get(position).getMovie_url();
         holder.setSkillVideo(movie_url);
@@ -102,7 +107,7 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
         String dateString = new SimpleDateFormat().format(new Date(milliseconds));
         holder.setTime(dateString);
 
-        firebaseFirestore.collection("Posts/" + skillPostId + "/Likes").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        firebaseFirestore.collection( "Category/" + categoryId + "/Posts/" + skillPostId + "/Likes").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
@@ -124,7 +129,7 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
             }
         });
 
-        firebaseFirestore.collection("Posts/" + skillPostId + "/Comments").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        firebaseFirestore.collection("Category/" + categoryId + "/Posts/" + skillPostId + "/Comments").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
@@ -146,7 +151,7 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
             }
         });
 
-        firebaseFirestore.collection("Posts/" + skillPostId + "/Likes").document(currentUserID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        firebaseFirestore.collection( "Category/" + categoryId + "/Posts/" + skillPostId + "/Likes").document(currentUserID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
 
@@ -171,7 +176,7 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
             @Override
             public void onClick(View view) {
 
-                firebaseFirestore.collection("Posts/" + skillPostId + "/Likes").document(currentUserID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                firebaseFirestore.collection("Category/" + categoryId + "/Posts/" + skillPostId + "/Likes").document(currentUserID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
@@ -180,10 +185,10 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
                             Map<String, Object> likesMap = new HashMap<>();
                             likesMap.put("timestamp", FieldValue.serverTimestamp());
 
-                            firebaseFirestore.collection("Posts/" + skillPostId + "/Likes").document(currentUserID).set(likesMap);
+                            firebaseFirestore.collection("Category/" + categoryId + "/Posts/" + skillPostId + "/Likes").document(currentUserID).set(likesMap);
                         } else {
 
-                            firebaseFirestore.collection("Posts/" + skillPostId + "/Likes").document(currentUserID).delete();
+                            firebaseFirestore.collection("Category/" + categoryId + "/Posts/" + skillPostId + "/Likes").document(currentUserID).delete();
 
                         }
 
@@ -199,6 +204,7 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
 
                 Intent commentIntent = new Intent(context, CommentsActivity.class);
                 commentIntent.putExtra("skill_post_id", skillPostId);
+                commentIntent.putExtra("category_id", categoryId);
                 context.startActivity(commentIntent);
 
             }
@@ -208,7 +214,7 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
             @Override
             public void onClick(View view) {
 
-                firebaseFirestore.collection("Posts").document(skillPostId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                firebaseFirestore.collection("Category/" + categoryId + "/Posts").document(skillPostId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
 
@@ -243,19 +249,18 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
         private TextView currentTimer;
         private TextView durationTimer;
         private ProgressBar currentProgress;
-//        private ProgressBar bufferProgress;
 
         private boolean isPlaying;
 
         private Uri videoUri;
 
-//        private int current = 0;
         private int duration = 0;
 
         private ImageView skillLikeButton;
         private TextView skillLikeCount;
 
         private ImageView skillCommentBtn;
+        private TextView skillCommentCount;
         private Button skillDeleteBtn;
 
         public ViewHolder(View itemView) {
@@ -306,8 +311,8 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
 
         public void updateCommentsCount(int count) {
 
-            skillLikeCount = mView.findViewById(R.id.skill_comment_count);
-            skillLikeCount.setText(count + " Comments");
+            skillCommentCount = mView.findViewById(R.id.skill_comment_count);
+            skillCommentCount.setText(count + " Comments");
 
         }
 
@@ -322,31 +327,11 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
 
             currentTimer = mView.findViewById(R.id.currentTimer);
             durationTimer = mView.findViewById(R.id.durationTimer);
-//            bufferProgress = mView.findViewById(R.id.bufferProgress);
 
             videoUri = Uri.parse(downloadUri);
 
             mainVideoView.setVideoURI(videoUri);
             mainVideoView.requestFocus();
-
-//            mainVideoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
-//                @Override
-//                public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
-//
-//                    if (i == mediaPlayer.MEDIA_INFO_BUFFERING_START) {
-//
-//                        bufferProgress.setVisibility(View.VISIBLE);
-//
-//                    } else if (i == mediaPlayer.MEDIA_INFO_BUFFERING_END) {
-//
-//                        bufferProgress.setVisibility(View.INVISIBLE);
-//
-//                    }
-//
-//                    return false;
-//
-//                }
-//            });
 
             mainVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
@@ -363,8 +348,6 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
             mainVideoView.start();
             isPlaying = true;
             playBtn.setImageResource(R.mipmap.action_pause);
-
-//            new VideoProgress().execute();
 
             playBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -388,47 +371,6 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
             });
 
         }
-
-//        public class VideoProgress extends AsyncTask<Void, Integer, Void> {
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//
-//                do {
-//
-////                    if (isPlaying) {
-//
-//                    current = mainVideoView.getCurrentPosition()/1000;
-//                    publishProgress(current);
-//
-////                    }
-//
-//                } while (currentProgress.getProgress() <= 100);
-//
-//                return null;
-//
-//            }
-//
-//            @Override
-//            protected void onProgressUpdate(Integer... values) {
-//                super.onProgressUpdate(values);
-//
-//                try {
-//
-//                    int currentPercent = values[0] * 100/duration;
-//                    currentProgress.setProgress(currentPercent);
-//
-//                    String currentString = String.format("%02d:%02d", values[0] / 60, values[0] % 60);
-//
-//                    currentTimer.setText(currentString);
-//
-//                } catch (Exception e) {
-//
-//
-//
-//                }
-//
-//            }
-//        }
 
     }
 
