@@ -55,6 +55,8 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
 
+    private String user_id;
+
     public SkillRecyclerAdapter(List<SkillPost> skill_list, List<User> user_list, SkillActivity activity ) {
 
         this.skill_list = skill_list;
@@ -89,14 +91,32 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
         String desc_data = skill_list.get(position).getDesc();
         holder.setDescText(desc_data);
 
-        String skill_user_id = skill_list.get(position).getUser_id();
+        final String skill_user_id = skill_list.get(position).getUser_id();
 
-        if (skill_user_id.equals(currentUserID)) {
+        user_id = firebaseAuth.getCurrentUser().getUid();
 
-            holder.skillDeleteBtn.setEnabled(true);
-            holder.skillDeleteBtn.setVisibility(View.VISIBLE);
+        firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-        }
+                if (task.isSuccessful()) {
+
+                    if (task.getResult().exists()) {
+
+                        String role = task.getResult().getString("role");
+
+                        if (skill_user_id.equals(currentUserID) || role.equals("admin")) {
+
+                            holder.skillDeleteBtn.setEnabled(true);
+                            holder.skillDeleteBtn.setVisibility(View.VISIBLE);
+
+                        }
+
+                    }
+
+                }
+            }
+        });
 
         String userName = user_list.get(position).getName();
         String userImage = user_list.get(position).getImage();

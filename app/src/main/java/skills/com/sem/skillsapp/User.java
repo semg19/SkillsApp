@@ -2,7 +2,7 @@ package skills.com.sem.skillsapp;
 
 public class User {
 
-    public String image, name;
+    public String image, name, role;
 
     public User() {
 
@@ -24,8 +24,18 @@ public class User {
         this.name = name;
     }
 
-    public User(String image, String name) {
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+
+    public User(String image, String name, String role) {
         this.image = image;
         this.name = name;
+        this.role = role;
     }
 }

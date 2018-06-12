@@ -119,14 +119,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//
-//        isPlaying = false;
-//
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

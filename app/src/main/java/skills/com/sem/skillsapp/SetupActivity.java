@@ -118,6 +118,7 @@ public class SetupActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 final String user_name = setupName.getText().toString();
+                final String user_role = "user";
 
                 if (!TextUtils.isEmpty(user_name) && mainImageURI != null) {
 
@@ -134,7 +135,7 @@ public class SetupActivity extends AppCompatActivity {
 
                                     if (task.isSuccessful()) {
 
-                                        storeFirestore(task, user_name);
+                                        storeFirestore(task, user_name, user_role);
 
                                     } else {
 
@@ -150,7 +151,7 @@ public class SetupActivity extends AppCompatActivity {
 
                         } else {
 
-                            storeFirestore(null,user_name);
+                            storeFirestore(null, user_name, user_role);
 
                         }
 
@@ -189,7 +190,7 @@ public class SetupActivity extends AppCompatActivity {
 
     }
 
-    private void storeFirestore(Task<UploadTask.TaskSnapshot> task, String user_name) {
+    private void storeFirestore(Task<UploadTask.TaskSnapshot> task, String user_name, String user_role) {
 
         Uri download_uri;
 
@@ -206,6 +207,7 @@ public class SetupActivity extends AppCompatActivity {
         Map<String, String> userMap = new HashMap<>();
         userMap.put("name", user_name);
         userMap.put("image", download_uri.toString());
+        userMap.put("role", user_role);
 
         firebaseFirestore.collection("Users").document(user_id).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -213,7 +215,7 @@ public class SetupActivity extends AppCompatActivity {
 
                 if (task.isSuccessful()){
 
-                    Toast.makeText(SetupActivity.this, "The user settings are uccesfully saved.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SetupActivity.this, "The user settings are succesfully saved.", Toast.LENGTH_LONG).show();
                     Intent mainIntent = new Intent(SetupActivity.this, MainActivity.class);
                     startActivity(mainIntent);
                     finish();

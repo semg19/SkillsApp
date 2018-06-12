@@ -165,6 +165,7 @@ public class SkillActivity extends AppCompatActivity {
             });
 
         }
+
     }
 
     public String getId() {
