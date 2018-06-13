@@ -1,6 +1,8 @@
 package skills.com.sem.skillsapp;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Intent;
@@ -234,15 +236,33 @@ public class SkillRecyclerAdapter extends RecyclerView.Adapter<SkillRecyclerAdap
             @Override
             public void onClick(View view) {
 
-                firebaseFirestore.collection("Category/" + categoryId + "/Posts").document(skillPostId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(skillActivity);
+                builder.setTitle("Confirm deletion");
+                builder.setMessage("You are about to delete this skill. Do you really want to proceed?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onSuccess(Void aVoid) {
+                    public void onClick(DialogInterface dialog, int which) {
+                        firebaseFirestore.collection("Category/" + categoryId + "/Posts").document(skillPostId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
 
-                        skill_list.remove(position);
-                        user_list.remove(position);
+                                skill_list.remove(position);
+                                user_list.remove(position);
 
+                            }
+                        });
                     }
                 });
+
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(skillActivity, "Deletion cancelled", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                builder.show();
 
             }
         });

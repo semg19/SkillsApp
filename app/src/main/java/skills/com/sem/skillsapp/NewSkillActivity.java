@@ -22,8 +22,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -89,7 +91,7 @@ public class NewSkillActivity extends AppCompatActivity {
 
                     newSkillProgress.setVisibility(View.VISIBLE);
 
-                    String randomName = FieldValue.serverTimestamp().toString();
+                    String randomName = desc + FieldValue.serverTimestamp().toString();
 
                     StorageReference filePath = storageReference.child("post_movies").child(randomName + ".3gp");
                     filePath.putFile(videoUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -105,6 +107,7 @@ public class NewSkillActivity extends AppCompatActivity {
                                 postMap.put("desc", desc);
                                 postMap.put("user_id", current_user_id);
                                 postMap.put("timestamp", FieldValue.serverTimestamp());
+
 
                                 firebaseFirestore.collection("Category/" + category_id + "/Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                     @Override
