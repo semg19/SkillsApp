@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -32,6 +35,7 @@ public class SkillActivity extends AppCompatActivity {
     private Toolbar skillToolbar;
     private RecyclerView skill_list_view;
     private FloatingActionButton addPostBtn;
+    private ImageView skillBackBtn;
 
     private SkillRecyclerAdapter skillRecyclerAdapter;
     public List<SkillPost> skill_list;
@@ -56,6 +60,9 @@ public class SkillActivity extends AppCompatActivity {
 
         skillToolbar = findViewById(R.id.skills_toolbar);
         setSupportActionBar(skillToolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Skills");
 
         skill_list = new ArrayList<>();
         user_list = new ArrayList<>();
@@ -131,7 +138,7 @@ public class SkillActivity extends AppCompatActivity {
 
                                             } else {
 
-                                                user_list.add(user);
+                                                user_list.add(0, user);
                                                 skill_list.add(0, skillPost);
 
                                             }
@@ -161,6 +168,13 @@ public class SkillActivity extends AppCompatActivity {
                     newSkillIntent.putExtra("category_id", category_id);
                     startActivity(newSkillIntent);
 
+                }
+            });
+
+            skillToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
                 }
             });
 

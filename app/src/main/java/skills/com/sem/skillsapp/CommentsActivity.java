@@ -55,6 +55,8 @@ public class CommentsActivity extends AppCompatActivity {
 
         commentToolbar = findViewById(R.id.comment_toolbar);
         setSupportActionBar(commentToolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Comments");
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -143,6 +145,13 @@ public class CommentsActivity extends AppCompatActivity {
                     }
                 });
 
+            }
+        });
+
+        commentToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 

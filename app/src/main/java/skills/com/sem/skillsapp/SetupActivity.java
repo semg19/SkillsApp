@@ -60,6 +60,8 @@ public class SetupActivity extends AppCompatActivity {
 
         Toolbar setupToolbar = findViewById(R.id.setupToolbar);
         setSupportActionBar(setupToolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Account Setup");
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -185,6 +187,13 @@ public class SetupActivity extends AppCompatActivity {
 
             }
 
+        });
+
+        setupToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
         });
 
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SkillsApp</string>
+    <string name="app_name">Skills App</string>
     <string name="pass_hint">Password</string>
     <string name="email_hint">Email</string>
     <string name="app_welcome">Welcome to</string>

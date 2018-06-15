@@ -74,12 +74,20 @@ public class NewSkillActivity extends AppCompatActivity {
 
         newSkillToolbar = findViewById(R.id.new_skill_toolbar);
         setSupportActionBar(newSkillToolbar);
+
         getSupportActionBar().setTitle("Add New Skill");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         newPostDesc = findViewById(R.id.new_skill_desc);
         newPostBtn = findViewById(R.id.post_btn);
         newSkillProgress = findViewById(R.id.new_skill_progress);
+
+        newSkillToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         newPostBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,8 +124,8 @@ public class NewSkillActivity extends AppCompatActivity {
                                         if (task.isSuccessful()) {
 
                                             Toast.makeText(NewSkillActivity.this, "Upload completed", Toast.LENGTH_LONG).show();
-                                            Intent mainIntent = new Intent(NewSkillActivity.this, MainActivity.class);
-                                            startActivity(mainIntent);
+//                                            Intent mainIntent = new Intent(NewSkillActivity.this, MainActivity.class);
+//                                            startActivity(mainIntent);
                                             finish();
 
                                         } else {
@@ -172,7 +180,12 @@ public class NewSkillActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        videoUri = data.getData();
+        if (data != null) {
+
+            videoUri = data.getData();
+
+        }
+
         if (requestCode == REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Toast.makeText(NewSkillActivity.this, "Video saved to:\n" + videoUri, Toast.LENGTH_LONG).show();
