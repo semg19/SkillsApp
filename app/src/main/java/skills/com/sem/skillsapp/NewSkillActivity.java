@@ -123,7 +123,7 @@ public class NewSkillActivity extends AppCompatActivity {
 
                                         if (task.isSuccessful()) {
 
-                                            Toast.makeText(NewSkillActivity.this, "Upload completed", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(NewSkillActivity.this, "Upload completed, please reload category to see your skill.", Toast.LENGTH_LONG).show();
 //                                            Intent mainIntent = new Intent(NewSkillActivity.this, MainActivity.class);
 //                                            startActivity(mainIntent);
                                             finish();
